@@ -1,22 +1,22 @@
 package main
 
 import (
-	"fmt"
 	"sort"
 	"strings"
+	"unicode"
 )
 
-func naiveSuggest(cities []City, prefix string, k int) {
+func naiveSuggest(cities []City, prefix string, k int) []City {
 	var matches []City
-	lowerCasedPrefix := strings.ToLower(strings.TrimSpace(prefix))
-
-	for i := 0; i < len(cities); i++ {
-		if strings.HasPrefix(strings.ToLower(cities[i].Name), lowerCasedPrefix) {
-			matches = append(matches, cities[i])
-		}
-	}
 
 	if k >= 0 { // only positive k value allowed
+		lowerCasedPrefix := strings.ToLower(strings.TrimLeftFunc(prefix, unicode.IsSpace)) // Trim only the strting whitespaces
+
+		for i := 0; i < len(cities); i++ {
+			if strings.HasPrefix(strings.ToLower(cities[i].Name), lowerCasedPrefix) {
+				matches = append(matches, cities[i])
+			}
+		}
 		sort.Slice(matches, func(i, j int) bool {
 
 			// If two cities have the same population, sort asc by city name
@@ -32,5 +32,5 @@ func naiveSuggest(cities []City, prefix string, k int) {
 		}
 	}
 
-	fmt.Printf("Matched entries are: %v\n", matches)
+	return matches
 }

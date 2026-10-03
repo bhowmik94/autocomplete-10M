@@ -1,13 +1,14 @@
 package main
 
 import (
+	"fmt"
 	"log"
 	"os"
 )
 
 func main() {
 	// Read the file into mamory
-	contentBytes, err := os.ReadFile("cities15000.txt")
+	contentBytes, err := os.ReadFile("data/cities15000.txt")
 	if err != nil {
 		log.Fatalf("Failed to read file: %v", err)
 	}
@@ -20,5 +21,7 @@ func main() {
 	// fmt.Printf("First city data: %v\n", cityData[:5])
 
 	// Search by prefix
-	naiveSuggest(cityData, "Abu", 20)
+	matchedCities := naiveSuggest(cityData, "Abu", -5)
+
+	fmt.Printf("Matched entries are: %v\n", matchedCities)
 }
