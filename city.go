@@ -35,8 +35,8 @@ func loadCities(input string) []City {
 			if err == nil {
 				cityItem.Population = population
 			}
-			cityItem.CountryCode = lineContents[8]
-			cityItem.Name = lineContents[1]
+			cityItem.CountryCode = strings.Clone(lineContents[8])
+			cityItem.Name = strings.Clone(lineContents[1])
 
 			cityData = append(cityData, cityItem)
 		}

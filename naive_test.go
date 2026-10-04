@@ -1,6 +1,7 @@
 package main
 
 import (
+	"os"
 	"slices"
 	"testing"
 )
@@ -107,5 +108,26 @@ func TestNaiveSuggest(t *testing.T) {
 			}
 		})
 		t.Skip()
+	}
+}
+
+var sink []City // keeps the compiler from optimizing the call away
+
+func BenchmarkNaiveSuggest(b *testing.B) {
+	content, err := os.ReadFile("data/cities15000.txt") // adjust path to where your file is
+	if err != nil {
+		b.Skip("data file not found, skipping benchmark")
+	}
+	cities := loadCities(string(content)) // your loader, called ONCE
+
+	prefixes := []string{"a", "dha", "dhaka", "xyzq"}
+	for _, p := range prefixes {
+		b.Run(p, func(b *testing.B) {
+			b.ReportAllocs()
+			b.ResetTimer()
+			for i := 0; i < b.N; i++ {
+				sink = naiveSuggest(cities, p, 10)
+			}
+		})
 	}
 }
