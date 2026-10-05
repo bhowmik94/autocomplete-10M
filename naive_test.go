@@ -6,7 +6,7 @@ import (
 	"testing"
 )
 
-func cityNames(cities []City) []string {
+func cityNames(cities []Place) []string {
 	var names []string
 	for i := 0; i < len(cities); i++ {
 		names = append(names, cities[i].Name)
@@ -15,7 +15,7 @@ func cityNames(cities []City) []string {
 }
 
 func TestNaiveSuggest(t *testing.T) {
-	cities := []City{
+	cities := []Place{
 		// "ber" prefix family, distinct populations
 		{ID: 1, Name: "Berlin", CountryCode: "DE", Population: 3600000},
 		{ID: 2, Name: "Bergen", CountryCode: "NO", Population: 285000},
@@ -111,14 +111,14 @@ func TestNaiveSuggest(t *testing.T) {
 	}
 }
 
-var sink []City // keeps the compiler from optimizing the call away
+var sink []Place // keeps the compiler from optimizing the call away
 
 func BenchmarkNaiveSuggest(b *testing.B) {
 	content, err := os.ReadFile("data/cities15000.txt") // adjust path to where your file is
 	if err != nil {
 		b.Skip("data file not found, skipping benchmark")
 	}
-	cities := loadCities(string(content)) // your loader, called ONCE
+	cities := loadPlaces(string(content)) // your loader, called ONCE
 
 	prefixes := []string{"a", "dha", "dhaka", "xyzq"}
 	for _, p := range prefixes {

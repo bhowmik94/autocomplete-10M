@@ -5,25 +5,25 @@ import (
 	"strings"
 )
 
-type City struct {
+type Place struct {
 	ID          int
 	Name        string
 	CountryCode string
 	Population  int
 }
 
-func loadCities(input string) []City {
+func loadPlaces(input string) []Place {
 
 	// Convert into array of strings by new line
 	lines := strings.Split(input, "\n")
-	var cityData []City
+	var cityData []Place
 
 	for i := 0; i < len(lines); i++ {
 		lineContents := strings.Split(lines[i], "\t")
 
 		// Check till Population field (Column 15)
 		if len(lineContents) >= 15 { // Check for omitting the last empty line in file
-			var cityItem City
+			var cityItem Place
 
 			// String to number conversion for ID field
 			id, err := strconv.Atoi(lineContents[0])

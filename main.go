@@ -29,7 +29,7 @@ func main() {
 
 	// Perform operations
 	start := time.Now()
-	cityData := loadCities(content)
+	cityData := loadPlaces(content)
 	fmt.Println("load time:", time.Since(start))
 	printMem("after load")
 
