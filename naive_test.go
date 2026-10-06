@@ -6,16 +6,16 @@ import (
 	"testing"
 )
 
-func cityNames(cities []Place) []string {
+func placeNames(places []Place) []string {
 	var names []string
-	for i := 0; i < len(cities); i++ {
-		names = append(names, cities[i].Name)
+	for i := 0; i < len(places); i++ {
+		names = append(names, places[i].Name)
 	}
 	return names
 }
 
 func TestNaiveSuggest(t *testing.T) {
-	cities := []Place{
+	places := []Place{
 		// "ber" prefix family, distinct populations
 		{ID: 1, Name: "Berlin", CountryCode: "DE", Population: 3600000},
 		{ID: 2, Name: "Bergen", CountryCode: "NO", Population: 285000},
@@ -100,8 +100,8 @@ func TestNaiveSuggest(t *testing.T) {
 
 	for _, tc := range tests {
 		t.Run(tc.name, func(t *testing.T) {
-			got := naiveSuggest(cities, tc.prefix, tc.k)
-			gotNames := cityNames(got)
+			got := naiveSuggest(places, tc.prefix, tc.k)
+			gotNames := placeNames(got)
 
 			if !slices.Equal(gotNames, tc.want) {
 				t.Errorf("prefix %v, got %v, want %v: ", tc.prefix, got, tc.want)

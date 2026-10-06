@@ -33,7 +33,7 @@ func loadPlacesFromFile(path string) ([]Place, error) {
 }
 
 func loadPlaces(scanner *bufio.Scanner) []Place {
-	var cityData []Place
+	var placeData []Place
 
 	for scanner.Scan() {
 		// Gets the current line text
@@ -41,26 +41,24 @@ func loadPlaces(scanner *bufio.Scanner) []Place {
 
 		lineContents := strings.Split(line, "\t")
 
-		// Check till Population field (Column 15)
 		if len(lineContents) >= 15 { // Check for omitting the last empty line in file
-			var cityItem Place
+			var placeItem Place
 
-			// String to number conversion for ID field
-			id, err := strconv.Atoi(lineContents[0])
+			id, err := strconv.Atoi(lineContents[0]) // String to number conversion
 			if err == nil {
-				cityItem.ID = id
+				placeItem.ID = id
 			}
-			// String to number conversion for Population field
+
 			population, err := strconv.Atoi(lineContents[14])
 			if err == nil {
-				cityItem.Population = population
+				placeItem.Population = population
 			}
-			cityItem.CountryCode = strings.Clone(lineContents[8])
-			cityItem.Name = strings.Clone(lineContents[1])
+			placeItem.CountryCode = strings.Clone(lineContents[8])
+			placeItem.Name = strings.Clone(lineContents[1])
 
-			cityData = append(cityData, cityItem)
+			placeData = append(placeData, placeItem)
 		}
 	}
 
-	return cityData
+	return placeData
 }
