@@ -30,5 +30,5 @@ func main() {
 	printMem("after load")
 
 	fmt.Printf("rows loaded: %d\n", len(places))
-	fmt.Printf("Matched entries are: %v\n", naiveSuggest(places, "Abu", 4))
+	fmt.Printf("Matched entries are: %v\n", naiveSuggest(places, "Dhaka", 4))
 }
