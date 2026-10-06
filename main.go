@@ -4,7 +4,6 @@ import (
 	"flag"
 	"fmt"
 	"log"
-	"os"
 	"runtime"
 	"time"
 )
@@ -18,29 +17,18 @@ func printMem(label string) {
 }
 
 func main() {
-	// Read the file into mamory
-	printMem("before load")
-
-	// configurable file path, default
 	dataPath := flag.String("data", "data/allCountries.txt", "path to GeoNames file")
 	flag.Parse()
 
-	contentBytes, err := os.ReadFile(*dataPath)
-	if err != nil {
-		log.Fatalf("Failed to read file: %v", err)
-	}
-
-	// Convert bytes to a string for manipulation
-	content := string(contentBytes)
-
-	// Perform operations
+	printMem("before load")
 	start := time.Now()
-	cityData := loadPlaces(content)
+	places, err := loadPlacesFromFile(*dataPath)
+	if err != nil {
+		log.Fatalf("failed to load %s: %v", *dataPath, err)
+	}
 	fmt.Println("load time:", time.Since(start))
 	printMem("after load")
 
-	// Search by prefix
-	matchedCities := naiveSuggest(cityData, "Abu", 4)
-
-	fmt.Printf("Matched entries are: %v\n", matchedCities)
+	fmt.Printf("rows loaded: %d\n", len(places))
+	fmt.Printf("Matched entries are: %v\n", naiveSuggest(places, "Abu", 4))
 }

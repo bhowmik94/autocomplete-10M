@@ -114,18 +114,16 @@ func TestNaiveSuggest(t *testing.T) {
 var sink []Place // keeps the compiler from optimizing the call away
 
 func BenchmarkNaiveSuggest(b *testing.B) {
-
-	// run this: $env:DATA_FILE = "data/allCountries.txt"; go test -bench=. -benchmem -run=^$ -benchtime=5x
+	// PowerShell: $env:DATA_FILE = "data/allCountries.txt"; go test -bench=. -benchmem -run=^$ -benchtime=5x
 	path := os.Getenv("DATA_FILE")
 	if path == "" {
 		path = "data/allCountries.txt"
 	}
 
-	content, err := os.ReadFile(path)
+	places, err := loadPlacesFromFile(path) // loaded ONCE, outside the timed loops
 	if err != nil {
-		b.Skip("data file not found, skipping benchmark")
+		b.Skipf("could not load %s: %v", path, err)
 	}
-	cities := loadPlaces(string(content)) // your loader, called ONCE
 
 	prefixes := []string{"a", "dha", "dhaka", "xyzq"}
 	for _, p := range prefixes {
@@ -133,7 +131,7 @@ func BenchmarkNaiveSuggest(b *testing.B) {
 			b.ReportAllocs()
 			b.ResetTimer()
 			for i := 0; i < b.N; i++ {
-				sink = naiveSuggest(cities, p, 10)
+				sink = naiveSuggest(places, p, 10)
 			}
 		})
 	}

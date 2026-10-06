@@ -1,6 +1,8 @@
 package main
 
 import (
+	"bufio"
+	"os"
 	"strconv"
 	"strings"
 )
@@ -12,14 +14,32 @@ type Place struct {
 	Population  int
 }
 
-func loadPlaces(input string) []Place {
+func loadPlacesFromFile(path string) ([]Place, error) {
+	file, err := os.Open(path)
+	if err != nil {
+		return nil, err
+	}
+	defer file.Close()
 
-	// Convert into array of strings by new line
-	lines := strings.Split(input, "\n")
+	const maxLine = 1024 * 1024 // 1 MB per line
+	scanner := bufio.NewScanner(file)
+	scanner.Buffer(make([]byte, 0, 64*1024), maxLine)
+
+	places := loadPlaces(scanner)
+	if err := scanner.Err(); err != nil {
+		return nil, err
+	}
+	return places, nil
+}
+
+func loadPlaces(scanner *bufio.Scanner) []Place {
 	var cityData []Place
 
-	for i := 0; i < len(lines); i++ {
-		lineContents := strings.Split(lines[i], "\t")
+	for scanner.Scan() {
+		// Gets the current line text
+		line := scanner.Text()
+
+		lineContents := strings.Split(line, "\t")
 
 		// Check till Population field (Column 15)
 		if len(lineContents) >= 15 { // Check for omitting the last empty line in file
