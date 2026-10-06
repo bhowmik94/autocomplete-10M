@@ -114,7 +114,14 @@ func TestNaiveSuggest(t *testing.T) {
 var sink []Place // keeps the compiler from optimizing the call away
 
 func BenchmarkNaiveSuggest(b *testing.B) {
-	content, err := os.ReadFile("data/cities15000.txt") // adjust path to where your file is
+
+	// run this: $env:DATA_FILE = "data/allCountries.txt"; go test -bench=. -benchmem -run=^$ -benchtime=5x
+	path := os.Getenv("DATA_FILE")
+	if path == "" {
+		path = "data/allCountries.txt"
+	}
+
+	content, err := os.ReadFile(path)
 	if err != nil {
 		b.Skip("data file not found, skipping benchmark")
 	}

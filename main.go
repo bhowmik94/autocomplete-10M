@@ -1,6 +1,7 @@
 package main
 
 import (
+	"flag"
 	"fmt"
 	"log"
 	"os"
@@ -19,7 +20,12 @@ func printMem(label string) {
 func main() {
 	// Read the file into mamory
 	printMem("before load")
-	contentBytes, err := os.ReadFile("data/cities15000.txt")
+
+	// configurable file path, default
+	dataPath := flag.String("data", "data/allCountries.txt", "path to GeoNames file")
+	flag.Parse()
+
+	contentBytes, err := os.ReadFile(*dataPath)
 	if err != nil {
 		log.Fatalf("Failed to read file: %v", err)
 	}
