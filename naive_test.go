@@ -114,7 +114,7 @@ func TestNaiveSuggest(t *testing.T) {
 var sink []Place // keeps the compiler from optimizing the call away
 
 func BenchmarkNaiveSuggest(b *testing.B) {
-	// PowerShell: $env:DATA_FILE = "data/allCountries.txt"; go test -bench=. -benchmem -run=^$ -benchtime=5x
+	// PowerShell: $env:DATA_FILE = "data/allCountries.txt"; go test -v -bench "." -benchmem -run "^$" -benchtime=5x
 	path := os.Getenv("DATA_FILE")
 	if path == "" {
 		path = "data/allCountries.txt"

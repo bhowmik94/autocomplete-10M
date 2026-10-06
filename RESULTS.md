@@ -13,4 +13,17 @@ Dataset: cities15000 (~34k rows)
 Load (cities15000, 34k rows): ~18 ms\
 Baseline heap (empty program): 0.3 MB\
 Heap after load, v1 (substrings of file text): 10.2 MB\
-Heap after load, v2 (strings.Clone):            2.5 MB
+Heap after load, v2 (strings.Clone):            2.5 MB\
+
+Dataset: allCountries, 13.47M rows | Load: 9.8 s | Heap after load: 993.5 MB
+
+| Level | Prefix | ns/op         | B/op        | allocs/op  |
+|-------|--------|---------------|-------------|------------|
+| 0     | a      | 1,757,419,860 | 413,568,708 | 13,469,051 |
+| 0     | dha    | 1,413,401,000 | 243,977,918 | 13,469,033 |
+| 0     | dhaka  | 1,472,474,380 | 241,684,158 | 13,469,023 |
+| 0     | xyzq   | 1,452,689,980 | 241,651,961 | 13,469,011 |
+
+Load (allCountries, 13.47M rows): ~9.7 s\
+Baseline heap (empty program):       0.3 MB\
+Heap after load, v2 (strings.Clone): 993.5 MB\
