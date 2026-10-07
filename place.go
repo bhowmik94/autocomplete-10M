@@ -10,6 +10,7 @@ import (
 type Place struct {
 	ID          int
 	Name        string
+	LowerName   string
 	CountryCode string
 	Population  int
 }
@@ -55,6 +56,7 @@ func loadPlaces(scanner *bufio.Scanner) []Place {
 			}
 			placeItem.CountryCode = strings.Clone(lineContents[8])
 			placeItem.Name = strings.Clone(lineContents[1])
+			placeItem.LowerName = strings.ToLower(placeItem.Name)
 
 			placeData = append(placeData, placeItem)
 		}

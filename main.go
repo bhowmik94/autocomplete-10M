@@ -1,10 +1,12 @@
 package main
 
 import (
+	"cmp"
 	"flag"
 	"fmt"
 	"log"
 	"runtime"
+	"slices"
 	"time"
 )
 
@@ -21,14 +23,30 @@ func main() {
 	flag.Parse()
 
 	printMem("before load")
-	start := time.Now()
+	t0 := time.Now()
 	places, err := loadPlacesFromFile(*dataPath)
+	parseTime := time.Since(t0)
+	fmt.Println("parse time:", parseTime)
+
+	t1 := time.Now()
+	slices.SortFunc(places, func(a, b Place) int {
+		if n := cmp.Compare(a.LowerName, b.LowerName); n != 0 {
+			return n
+		}
+
+		return cmp.Compare(a.ID, b.ID)
+	})
+
+	sortTime := time.Since(t1)
+	fmt.Println("sort time:", sortTime)
+
 	if err != nil {
 		log.Fatalf("failed to load %s: %v", *dataPath, err)
 	}
-	fmt.Println("load time:", time.Since(start))
 	printMem("after load")
 
 	fmt.Printf("rows loaded: %d\n", len(places))
-	fmt.Printf("Matched entries are: %v\n", naiveSuggest(places, "Dhaka", 4))
+	// fmt.Printf("Matched entries are: %v\n", naiveSuggest(places, "Ber", 4))
+
+	fmt.Printf("Matched entries are: %v\n", suggestSorted(places, "Ber", 4))
 }
