@@ -1,12 +1,10 @@
 package main
 
 import (
-	"cmp"
 	"flag"
 	"fmt"
 	"log"
 	"runtime"
-	"slices"
 	"time"
 )
 
@@ -27,18 +25,6 @@ func main() {
 	places, err := loadPlacesFromFile(*dataPath)
 	parseTime := time.Since(t0)
 	fmt.Println("parse time:", parseTime)
-
-	t1 := time.Now()
-	slices.SortFunc(places, func(a, b Place) int {
-		if n := cmp.Compare(a.LowerName, b.LowerName); n != 0 {
-			return n
-		}
-
-		return cmp.Compare(a.ID, b.ID)
-	})
-
-	sortTime := time.Since(t1)
-	fmt.Println("sort time:", sortTime)
 
 	if err != nil {
 		log.Fatalf("failed to load %s: %v", *dataPath, err)

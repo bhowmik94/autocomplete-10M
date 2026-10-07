@@ -3,6 +3,7 @@ package main
 import (
 	"bufio"
 	"os"
+	"slices"
 	"strconv"
 	"strings"
 )
@@ -13,6 +14,16 @@ type Place struct {
 	LowerName   string
 	CountryCode string
 	Population  int
+}
+
+func buildIndex(places []Place) []Place {
+	for i := range places {
+		places[i].LowerName = strings.ToLower(places[i].Name)
+	}
+	slices.SortFunc(places, func(a, b Place) int {
+		return strings.Compare(a.LowerName, b.LowerName)
+	})
+	return places
 }
 
 func loadPlacesFromFile(path string) ([]Place, error) {
@@ -30,7 +41,8 @@ func loadPlacesFromFile(path string) ([]Place, error) {
 	if err := scanner.Err(); err != nil {
 		return nil, err
 	}
-	return places, nil
+
+	return buildIndex(places), nil
 }
 
 func loadPlaces(scanner *bufio.Scanner) []Place {
@@ -56,7 +68,6 @@ func loadPlaces(scanner *bufio.Scanner) []Place {
 			}
 			placeItem.CountryCode = strings.Clone(lineContents[8])
 			placeItem.Name = strings.Clone(lineContents[1])
-			placeItem.LowerName = strings.ToLower(placeItem.Name)
 
 			placeData = append(placeData, placeItem)
 		}

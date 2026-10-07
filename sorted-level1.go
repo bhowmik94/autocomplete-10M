@@ -38,7 +38,6 @@ func suggestSorted(places []Place, prefix string, k int) []Place {
 		relativeIndex, _ := slices.BinarySearchFunc(places[startIndex:], shiftedPrefix, func(p Place, target string) int {
 			return strings.Compare(p.LowerName, target)
 		})
-
 		endIndex := startIndex + relativeIndex
 
 		matches = places[startIndex:endIndex]
