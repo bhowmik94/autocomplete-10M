@@ -6,16 +6,6 @@ import (
 	"strings"
 )
 
-func shiftLastCharacter(prefix string) string {
-	if len(prefix) > 0 {
-		runes := []rune(prefix)
-		lastChar := len(runes) - 1
-		runes[lastChar] = runes[lastChar] + 1
-		return string(runes)
-	}
-	return ""
-}
-
 func sortAndCutMatches(matches []Place, k int) []Place {
 	sort.Slice(matches, func(i, j int) bool {
 
@@ -29,6 +19,7 @@ func sortAndCutMatches(matches []Place, k int) []Place {
 
 	if len(matches) > k {
 		matches = matches[:k]
+		matches = slices.Clone(matches)
 	}
 	return matches
 }
@@ -36,7 +27,7 @@ func sortAndCutMatches(matches []Place, k int) []Place {
 func suggestSorted(places []Place, prefix string, k int) []Place {
 	var matches []Place
 
-	if k > 0 {
+	if k > 0 && len(prefix) > 0 {
 		lowerCasedPrefix := lowerTrim(prefix) // Trim only the strting whitespaces
 
 		startIndex, _ := slices.BinarySearchFunc(places, lowerCasedPrefix, func(p Place, target string) int {
@@ -44,9 +35,11 @@ func suggestSorted(places []Place, prefix string, k int) []Place {
 		})
 
 		shiftedPrefix := shiftLastCharacter(lowerCasedPrefix)
-		endIndex, _ := slices.BinarySearchFunc(places, shiftedPrefix, func(p Place, target string) int {
+		relativeIndex, _ := slices.BinarySearchFunc(places[startIndex:], shiftedPrefix, func(p Place, target string) int {
 			return strings.Compare(p.LowerName, target)
 		})
+
+		endIndex := startIndex + relativeIndex
 
 		matches = places[startIndex:endIndex]
 		block := slices.Clone(matches) // Cloning to protect original matches slice

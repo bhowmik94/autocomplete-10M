@@ -7,7 +7,7 @@ import (
 func naiveSuggest(cities []Place, prefix string, k int) []Place {
 	var matches []Place
 
-	if k >= 0 { // only positive k value allowed
+	if k >= 0 && len(prefix) > 0 {
 		lowerCasedPrefix := lowerTrim(prefix) // Trim only the strting whitespaces
 
 		for i := 0; i < len(cities); i++ {
