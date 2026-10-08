@@ -5,7 +5,6 @@ import (
 	"fmt"
 	"log"
 	"runtime"
-	"time"
 )
 
 func printMem(label string) {
@@ -21,10 +20,7 @@ func main() {
 	flag.Parse()
 
 	printMem("before load")
-	t0 := time.Now()
 	places, err := loadPlacesFromFile(*dataPath)
-	parseTime := time.Since(t0)
-	fmt.Println("parse time:", parseTime)
 
 	if err != nil {
 		log.Fatalf("failed to load %s: %v", *dataPath, err)
