@@ -75,8 +75,8 @@ func testPlaces() []Place {
 func TestSuggest(t *testing.T) {
 	for _, impl := range implementations {
 		t.Run(impl.name, func(t *testing.T) {
-			places := testPlaces() // fresh copy for each implementation
-			for _, tc := range suggestCases {
+			places := testPlaces()            // fresh copy for each implementation
+			for _, tc := range suggestCases { // possible test cases on testCases.go file
 				t.Run(tc.name, func(t *testing.T) {
 					got := placeNames(impl.fn(places, tc.prefix, tc.k))
 					if !slices.Equal(got, tc.want) {
@@ -88,6 +88,7 @@ func TestSuggest(t *testing.T) {
 	}
 }
 
+// Equivalence test
 func TestSortedMatchesNaive(t *testing.T) {
 	places := testPlaces()
 	prefixes := []string{"", "zzz", " ber"}
