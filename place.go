@@ -11,11 +11,11 @@ import (
 )
 
 type Place struct {
-	ID          int
-	Name        string
-	LowerName   string
-	CountryCode string
-	Population  int
+	ID          int    `json:"id"`
+	Name        string `json:"name"`
+	LowerName   string `json:"-"` // skip during json.Marshal
+	CountryCode string `json:"country_code"`
+	Population  int    `json:"population"`
 }
 
 func buildIndex(places []Place) []Place {
