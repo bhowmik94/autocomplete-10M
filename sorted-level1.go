@@ -1,21 +1,25 @@
 package main
 
 import (
+	"cmp"
+	"fmt"
 	"slices"
-	"sort"
 	"strings"
+	"time"
 )
 
 func sortAndCutMatches(matches []Place, k int) []Place {
-	sort.Slice(matches, func(i, j int) bool {
-
+	start := time.Now()
+	slices.SortFunc(matches, func(a, b Place) int {
 		// If two cities have the same population, sort desc by place ID
-		if matches[i].Population == matches[j].Population {
-			return matches[i].ID > matches[j].ID
+		if a.Population == b.Population {
+			return cmp.Compare(b.ID, a.ID) // b first for descending order
 		}
 
-		return matches[i].Population > matches[j].Population
+		return cmp.Compare(b.Population, a.Population)
 	})
+
+	fmt.Println("Block sort time:", time.Since(start))
 
 	if len(matches) > k {
 		matches = matches[:k]

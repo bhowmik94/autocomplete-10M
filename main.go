@@ -28,7 +28,8 @@ func main() {
 	printMem("after load")
 
 	fmt.Printf("rows loaded: %d\n", len(places))
-	// fmt.Printf("Matched entries are: %v\n", naiveSuggest(places, "Ber", 4))
 
-	fmt.Printf("Matched entries are: %v\n", suggestSorted(places, "Ber", 4))
+	// fmt.Printf("Matched entries are: %v\n", naiveSuggest(places, "Ber", 4))
+	// fmt.Printf("Matched entries are: %v\n", suggestSorted(places, "Ber", 4))
+	fmt.Printf("Matched entries are: %v\n", suggestTopK(places, "Ber", 4))
 }
