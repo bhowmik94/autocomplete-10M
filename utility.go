@@ -18,3 +18,11 @@ func shiftLastCharacter(prefix string) string {
 	}
 	return ""
 }
+
+func isBetter(a, b Place) bool {
+	// If two places have the same population, sort desc by place ID
+	if a.Population != b.Population {
+		return a.Population > b.Population
+	}
+	return a.ID > b.ID
+}

@@ -32,8 +32,7 @@ Heap after load, v2 (strings.Clone): 993.5 MB\
 
 ## Level 1: sorted array + binary search
 
-Machine: AMD Ryzen 5 5500U, Windows, Go 1.26.4\
-Dataset: allCountries (13,472,243 rows)
+Same machine and dataset as Level 1 (13,472,243 rows)
 
 ### Load
 
@@ -58,15 +57,6 @@ Dataset: allCountries (13,472,243 rows)
 | 1     | dha    | 2,134,666     | 770,896     | 6          |
 | 1     | dhaka  | 19,322        | 14,416      | 6          |
 | 1     | xyzq   | 572           | 32          | 2          |
-
-Naive re-measured on the sorted, Level 1 data layout:
-
-| Prefix | ns/op         | B/op        | allocs/op  |
-|--------|---------------|-------------|------------|
-| a      | 2,635,491,220 | 454,659,704 | 13,469,052 |
-| dha    | 2,341,362,720 | 245,427,838 | 13,469,035 |
-| dhaka  | 2,392,271,300 | 241,692,286 | 13,469,024 |
-| xyzq   | 2,326,834,160 | 241,651,952 | 13,469,011 |
 
 ### Speedup vs naive (same run)
 
@@ -96,4 +86,38 @@ git checkout level1/binary-search
 $env:DATA_FILE = "data/allCountries.txt"
 go test -bench "Suggest/naive" -benchmem -run "^$" -benchtime=5x
 go test -bench "Suggest/sorted" -benchmem -run "^$"
+```
+
+## Level 2: single-pass top-k (sorted-slice podium, no copy, no sort)
+
+Same machine and dataset as Level 1 (13,472,243 rows). Load unchanged: parse 9.7 s, sort 9.4 s.
+
+| Level | Prefix | ns/op       | B/op        | allocs/op  |
+|-------|--------|-------------|-------------|------------|
+| 0     | a      | 2,635,491,220 | 454,659,704 | 13,469,052 |
+| 1     | a      | 144,189,800 | 37,692,238  | 6          |
+| 2     | a      | 2,922,128   | 708         | 2          |
+| 0     | dha    | 2,341,362,720 | 245,427,838 | 13,469,035 |
+| 1     | dha    | 2,134,666   | 770,896     | 6          |
+| 2     | dha    | 46,908      | 712         | 2          |
+| 0     | dhaka  | 2,392,271,300 | 241,692,286 | 13,469,024 |
+| 1     | dhaka  | 19,322      | 14,416      | 6          |
+| 2     | dhaka  | 1,864       | 712         | 2          |
+| 0     | xyzq   | 2,326,834,160 | 241,651,952 | 13,469,011 |
+| 1     | xyzq   | 572         | 32          | 2          |
+| 2     | xyzq   | 454         | 8           | 1          |
+
+### Findings
+- Memory per query is constant (~700 B), independent of block size.
+- `a` (~590k-place block): 2.9 ms, about 5 ns per place scanned, roughly 13 GB/s.
+  The scan is memory-bound: each Place is 64 B but the loop reads only Population and ID.
+- Block-size scaling: 590k places -> 2.9 ms, 12k places -> 47 µs.
+- For k = 10 a sorted-slice podium is simpler than a heap and fast enough.
+
+### Reproduce
+
+```bash
+git checkout level2/top-k
+$env:DATA_FILE = "data/allCountries.txt"
+go test -bench "Suggest/topk" -benchmem -run "^$"
 ```

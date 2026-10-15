@@ -17,6 +17,7 @@ type implementation struct {
 var implementations = []implementation{
 	{"naive", naiveSuggest},
 	{"sorted", suggestSorted},
+	{"topk", suggestTopK},
 }
 
 func placeNames(places []Place) []string {
