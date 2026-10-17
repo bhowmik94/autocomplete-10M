@@ -6,12 +6,8 @@ import (
 	"log"
 	"net/http"
 	"runtime"
+	"time"
 )
-
-type server struct {
-	places  []Place
-	suggest func([]Place, string, int) []Place // which suggestion function to use
-}
 
 func printMem(label string) {
 	runtime.GC() // collect garbage first so the number is meaningful
@@ -33,9 +29,16 @@ func main() {
 	}
 	printMem("after load")
 
+	addr := flag.String("addr", "localhost:8080", "HTTP server address")
+
 	s := &server{places: places, suggest: suggestTopK}
-	http.HandleFunc("/suggest", s.handleSuggest)
-	log.Fatal(http.ListenAndServe(":8080", nil))
+	srv := &http.Server{
+		Addr:              *addr,
+		Handler:           s.routes(),
+		ReadHeaderTimeout: 5 * time.Second,
+		IdleTimeout:       60 * time.Second,
+	}
+	log.Fatal(srv.ListenAndServe())
 
 	// fmt.Printf("Matched entries are: %v\n", naiveSuggest(places, "Ber", 4))
 	// fmt.Printf("Matched entries are: %v\n", suggestSorted(places, "Ber", 4))
