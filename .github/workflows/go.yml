@@ -5,7 +5,7 @@ name: Go
 
 on:
   push:
-    branches: [ "main" ]
+    branches: [ "main", "level1/binary-search" ]
   pull_request:
     branches: [ "main" ]
 
