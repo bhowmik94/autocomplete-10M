@@ -19,6 +19,7 @@ func printMem(label string) {
 
 func main() {
 	dataPath := flag.String("data", "data/allCountries.txt", "path to GeoNames file")
+	addr := flag.String("addr", "localhost:8080", "HTTP server address")
 	flag.Parse()
 
 	printMem("before load")
@@ -29,12 +30,10 @@ func main() {
 	}
 	printMem("after load")
 
-	addr := flag.String("addr", "localhost:8080", "HTTP server address")
-
 	s := &server{places: places, suggest: suggestTopK}
 	srv := &http.Server{
 		Addr:              *addr,
-		Handler:           s.routes(),
+		Handler:           s.routes(), // HTTP request handler in separate server.go file
 		ReadHeaderTimeout: 5 * time.Second,
 		IdleTimeout:       60 * time.Second,
 	}
