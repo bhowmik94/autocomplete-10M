@@ -4,14 +4,21 @@
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
     <title>Place finder</title>
+    <link
+      rel="icon"
+      href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' 
+      viewBox='0 0 40 40'%3E%3Crect width='40' height='40' rx='6' 
+      fill='%230b746b'/%3E%3Cpath d='M20 5a11 11 0 0 0-11 11c0 8 11 19 11 19s11-11 11-19A11 11 0 0 0 20 5Zm0 15a4 4 0 1 1 0-8 4 4 0 0 1 0 8Z' fill='white'/%3E%3C/svg%3E"
+    />
     <style>
       :root {
         color-scheme: light;
         font:
           16px/1.5 system-ui,
           sans-serif;
-        color: #202b36;
-        background: #f3f6f8;
+        color: #182b2a;
+        background: #f3f6f5;
+        accent-color: #0b746b;
       }
       * {
         box-sizing: border-box;
@@ -22,72 +29,123 @@
         display: flex;
         justify-content: center;
         align-items: flex-start;
-        padding: 24px;
+        padding: 20px;
         scrollbar-gutter: stable;
       }
       main {
-        width: min(100%, 620px);
-        margin-block: clamp(24px, 8vh, 72px);
-        padding: clamp(24px, 6vw, 48px);
+        width: min(100%, 560px);
+        margin-block: clamp(20px, 7vh, 60px);
+        padding: clamp(22px, 5vw, 36px);
         background: white;
-        border: 1px solid #e1e7ec;
-        border-radius: 18px;
-        box-shadow: 0 16px 48px #1b34420d;
+        border: 1px solid #dce5e2;
+        border-top: 3px solid #0b746b;
+        box-shadow: 0 10px 30px #173c3510;
       }
       h1 {
-        margin: 0 0 8px;
-        font-size: clamp(1.7rem, 5vw, 2.2rem);
-        letter-spacing: -0.03em;
+        margin: 0 0 4px;
+        font-size: clamp(1.6rem, 5vw, 2rem);
+        letter-spacing: -0.04em;
       }
       p {
-        color: #5d6b77;
+        color: #60716e;
+      }
+      main > p:first-of-type {
+        margin: 0;
       }
       label {
         display: block;
-        margin: 24px 0 7px;
+        margin: 22px 0 6px;
+        font-size: 0.9rem;
         font-weight: 650;
       }
       input {
         width: 100%;
-        padding: 13px 15px;
-        border: 1px solid #b9c5ce;
-        border-radius: 9px;
+        padding: 10px 12px;
+        border: 1px solid #bdcbc7;
+        border-radius: 2px;
+        background: #fcfdfd;
+        color: inherit;
         font: inherit;
+        transition:
+          border-color 140ms ease,
+          box-shadow 140ms ease;
       }
       input:focus {
-        outline: 3px solid #1976d233;
-        border-color: #1976d2;
+        outline: none;
+        border-color: #0b746b;
+        box-shadow: 0 0 0 3px #0b746b20;
       }
       #status {
         min-height: 1.5em;
-        margin: 12px 0 8px;
-        color: #5d6b77;
+        margin: 10px 0 6px;
+        display: flex;
+        align-items: center;
+        gap: 8px;
+        color: #60716e;
+        font-size: 0.9rem;
+      }
+      #loader {
+        width: 13px;
+        height: 13px;
+        flex: 0 0 auto;
+        border: 2px solid #cbdad6;
+        border-top-color: #0b746b;
+        border-radius: 50%;
+        animation: spin 700ms linear infinite;
+      }
+      #loader[hidden] {
+        display: none;
+      }
+      @keyframes spin {
+        to {
+          transform: rotate(360deg);
+        }
+      }
+      @media (prefers-reduced-motion: reduce) {
+        *,
+        *::before,
+        *::after {
+          animation-duration: 0.01ms !important;
+          transition-duration: 0.01ms !important;
+        }
       }
       ul {
-        height: 300px;
+        height: 280px;
         overflow-y: auto;
         list-style: none;
         margin: 0;
         padding: 0;
         scrollbar-gutter: stable;
+        border-bottom: 1px solid #e5ece9;
       }
       li {
-        padding: 12px 14px;
+        padding: 9px 10px;
         border-top: 1px solid #e8edf0;
       }
       li strong {
         display: block;
+        font-weight: 600;
+      }
+      li:first-child {
+        border-top-color: #dce5e2;
       }
       li span {
-        color: #687782;
-        font-size: 0.92rem;
+        color: #71817e;
+        font-size: 0.85rem;
       }
       footer {
-        margin-top: 28px;
-        padding-top: 16px;
-        border-top: 1px solid #e8edf0;
-        color: #71808a;
+        margin-top: 18px;
+        padding-top: 12px;
+        border-top: 1px solid #e5ece9;
+        color: #71817e;
         font-size: 0.82rem;
+      }
+      a {
+        color: #0b746b;
+        text-underline-offset: 2px;
+      }
+      a:hover {
+        color: #07564f;
       }
     </style>
   </head>
@@ -103,7 +161,10 @@
         placeholder="Try Berlin"
         aria-describedby="status"
       />
-      <p id="status" role="status" aria-live="polite">Type to search.</p>
+      <p id="status" role="status" aria-live="polite">
+        <span id="loader" aria-hidden="true" hidden></span>
+        <span id="status-text">Type to search.</span>
+      </p>
       <ul id="results" aria-label="Suggestions"></ul>
       <footer>
         Place data from <a href="https://www.geonames.org/">GeoNames</a>,
@@ -113,11 +174,17 @@
     </main>
     <script>
       const input = document.querySelector("#query");
-      const status = document.querySelector("#status");
+      const statusText = document.querySelector("#status-text");
+      const loader = document.querySelector("#loader");
       const results = document.querySelector("#results");
       let timer;
       let activeRequest;
       let generation = 0;
+
+      function setStatus(message, loading = false) {
+        statusText.textContent = message;
+        loader.hidden = !loading;
+      }
 
       input.addEventListener("input", () => {
         clearTimeout(timer);
@@ -126,17 +193,17 @@
         const query = input.value.trim();
         results.replaceChildren();
         if (!query) {
-          status.textContent = "Type to search.";
+          setStatus("Type to search.");
           return;
         }
-        status.textContent = "Waiting for input…";
-        timer = setTimeout(() => search(query, requestGeneration), 125);
+        setStatus("Waiting for input…", true);
+        timer = setTimeout(() => search(query, requestGeneration), 300);
       });
 
       async function search(query, requestGeneration) {
         const controller = new AbortController();
         activeRequest = controller;
-        status.textContent = "Searching…";
+        setStatus("Searching…", true);
         try {
           const response = await fetch(
             `/suggest?q=${encodeURIComponent(query)}&limit=10`,
@@ -147,10 +214,12 @@
           const places = await response.json();
           if (requestGeneration !== generation) return;
           if (!places.length) {
-            status.textContent = "No matching places found.";
+            setStatus("No matching places found.");
             return;
           }
-          status.textContent = `${places.length} suggestion${places.length === 1 ? "" : "s"}`;
+          setStatus(
+            `${places.length} suggestion${places.length === 1 ? "" : "s"}`,
+          );
           const items = places.map((place) => {
             const item = document.createElement("li");
             const name = document.createElement("strong");
@@ -164,7 +233,7 @@
         } catch (error) {
           if (error.name === "AbortError" || requestGeneration !== generation)
             return;
-          status.textContent = "Could not load suggestions. Please try again.";
+          setStatus("Could not load suggestions. Please try again.");
         }
       }
     </script>
