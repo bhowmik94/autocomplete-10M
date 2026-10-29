@@ -6,6 +6,10 @@ It is a learning project: I built the simplest version first, measured it, and i
 
 Read the write-up: [article link](https://dev.to/sourav_bhowmik_73d35592ab/from-full-table-scans-to-millisecond-search-in-go-optimizing-prefix-search-for-135-million-places-3i2h)
 
+## Demo
+
+ ![Search demo: results update as you type](docs/demo.gif)
+
 ## Quick start
 
 Requirements: Go 1.21 or newer (see `go.mod`).
