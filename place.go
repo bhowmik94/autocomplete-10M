@@ -2,19 +2,37 @@ package main
 
 import (
 	"bufio"
+	"fmt"
 	"os"
+	"slices"
 	"strconv"
 	"strings"
+	"time"
 )
 
 type Place struct {
-	ID          int
-	Name        string
-	CountryCode string
-	Population  int
+	ID          int    `json:"id"`
+	Name        string `json:"name"`
+	LowerName   string `json:"-"` // skip during json.Marshal
+	CountryCode string `json:"country_code"`
+	Population  int    `json:"population"`
+}
+
+func buildIndex(places []Place) []Place {
+	for i := range places {
+		places[i].LowerName = strings.ToLower(places[i].Name)
+	}
+	t1 := time.Now()
+	slices.SortFunc(places, func(a, b Place) int {
+		return strings.Compare(a.LowerName, b.LowerName)
+	})
+	sortTime := time.Since(t1)
+	fmt.Println("sort time:", sortTime)
+	return places
 }
 
 func loadPlacesFromFile(path string) ([]Place, error) {
+	t0 := time.Now()
 	file, err := os.Open(path)
 	if err != nil {
 		return nil, err
@@ -29,7 +47,10 @@ func loadPlacesFromFile(path string) ([]Place, error) {
 	if err := scanner.Err(); err != nil {
 		return nil, err
 	}
-	return places, nil
+	parseTime := time.Since(t0)
+	fmt.Println("parse time:", parseTime)
+
+	return buildIndex(places), nil
 }
 
 func loadPlaces(scanner *bufio.Scanner) []Place {
